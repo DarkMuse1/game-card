@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.game__list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.game__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    width: 18%;
+    height: 200px;
+    background-color: rgb(9, 233, 158);
+    color: transparent;
+    border-radius: 18px;
+    font-size: 48px;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.game__item.open {
+    background-color: rgb(31 58 49);
+    color: rgb(219 206 192);
+}
+
+.game__item.success {
+    background-color: rgb(49 139 109);
+    color: rgb(255, 255, 255);
+    transform: scale(0.95);
+}
