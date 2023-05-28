@@ -1,5 +1,75 @@
 (() => {
+  let currTimer;
   const startMyGame = {
+    createTimer: function (container, currTimer) {
+      if (currTimer != undefined) {
+        clearInterval(currTimer);
+      }
+
+      let timer = document.querySelector(".timer__value");
+      let timerValue = 60;
+
+      let timerInterval = setInterval(() => {
+        if (timerValue < 0) {
+          alert('У вас закончилось время');
+          container.innerHTML = "";
+          cardsNumberArray = [];
+          cardsArray = [];
+          firstCard = null;
+          secondCard = null;
+          timer.remove();
+
+          startMyGame.gameCreate("Игра окончена, введите новое количество карточек", false, true);
+          clearInterval(timerInterval);
+        }
+        timer.innerHTML = String(`У вас время - <span class="timer__number">${timerValue}c</span>`);
+        timerValue--;
+      }, 1000);
+
+      return timerInterval;
+    },
+    gameCreate: function (title, classTitle = false) {
+      let input = document.createElement("input");
+      let button = document.createElement("button");
+      let h3 = document.createElement("h3");
+      let spanTimer = document.createElement('span');
+      input.classList.add("number__cards");
+      input.setAttribute("placeholder", "От 2 до 10");
+      button.classList.add("btn__start");
+      h3.classList.add("title__text");
+      spanTimer.classList.add('timer__value');
+
+      if (classTitle == true) {
+        h3.classList.add("end");
+      }
+
+      h3.textContent = title;
+      button.textContent = "Начать игру";
+
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        countCard = parseInt(input.value);
+        if (countCard % 2 === 0) {
+          input.remove();
+          button.remove();
+          h3.remove();
+        } else {
+          alert('Введите четное число. Число по умолчанию = 4');
+          countCard = 4;
+          input.remove();
+          button.remove();
+          h3.remove();
+        }
+
+        countCard *= countCard;
+        this.startGame(document.getElementById("game"), true, countCard);
+      });
+
+      document.querySelector(".block__action").append(input);
+      document.querySelector(".block__action").append(spanTimer);
+      document.querySelector(".number__cards").before(h3);
+      document.querySelector(".number__cards").after(button);
+    },
     createRandomArray: function (countEl) {
       let cardsNumber = [];
 
@@ -17,16 +87,18 @@
       return sortArray;
     },
 
-    startGame: function (container, count) {
+    startGame: function (container, timer = false, count) {
       let cardsNumberArray = this.shuffle(this.createRandomArray(count)),
           cardsArray = [],
           firstCard = null,
           secondCard = null;
 
+      if (timer === true) {
+        currTimer = this.createTimer(container, currTimer);
+      }
+
       for (const cardsInt of cardsNumberArray) {
-        cardsArray.push(
-          new this.Card(container, cardsInt, flat)
-        );
+        cardsArray.push(new this.Card(container, cardsInt, flat));
       }
 
       function flat(card) {
@@ -80,8 +152,9 @@
           cardsArray = [];
           firstCard = null;
           secondCard = null;
+          document.querySelector('.timer__value').remove();
 
-          startMyGame.startGame(container, count);
+          startMyGame.gameCreate("Игра окончена, введите новое количество карточек", true, true);
         }
       }
     },
@@ -89,7 +162,7 @@
     Card: function (container, number, action) {
       this.open = false;
       this.success = false;
-      this.card = document.createElement("li");
+      this.card = document.createElement("div");
       this.card.classList.add("game__item");
       this.card.textContent = number;
       this.number = number;
@@ -102,5 +175,5 @@
       container.append(this.card);
     },
   };
-  startMyGame.startGame(document.getElementById('game'), 8);
+  startMyGame.gameCreate("Введите количество карточек", false);
 })();
